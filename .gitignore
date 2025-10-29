@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.env
+.env.*
+*.env
+# Airflow
+airflow_home/
+logs/
+dags/__pycache__/
+# Docker & Compose
+*.log
+docker-data/
+# volumes locaux éventuels
+data/
+volumes/
+# Secrets & clés
+*.key
+*.pem
+fernet_key.txt
+# Artefacts
+*.joblib
+node_modules/
+.streamlit/
+.vscode/
+
