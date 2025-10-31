@@ -49,4 +49,8 @@ up-elastic down-elastic restart-elastic: ; make $(subst -, ,$@) arg=elastic
 logs-api: ; make logs arg=api
 
 help:
+ chore/re-modification-de-structure
 	@echo "Usage : make [up|down|restart|logs] [api|airflow|elastic|all]"
+=======
+	@echo "Usage : make [up|down|restart|logs] [api|airflow|elastic|all]"
+  main
