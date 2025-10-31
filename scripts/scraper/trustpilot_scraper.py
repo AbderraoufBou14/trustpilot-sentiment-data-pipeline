@@ -122,7 +122,6 @@ def scrape_trustpilot_reviews(base_url: str, output_file: str = "reviews.json", 
     all_reviews: list[dict] = []
 
     for page in range(1, max_pages + 1):
-        # Construire la requête (page 1 sans param)
         try:
             if page == 1:
                 resp = session.get(base_url, timeout=(5, 20))
@@ -157,13 +156,12 @@ def scrape_trustpilot_reviews(base_url: str, output_file: str = "reviews.json", 
             polite_sleep()
             continue
 
-        # Parser: lxml si dispo, fallback html.parser sinon
         try:
             soup = BeautifulSoup(resp.text, "lxml")
         except FeatureNotFound:
             soup = BeautifulSoup(resp.text, "html.parser")
 
-        # Cible les conteneurs d'avis (balise sémantique d'abord)
+        # Cible les conteneurs d'avis 
         articles = soup.find_all('div', class_='styles_cardWrapper__g8amG styles_show__Z8n7u' )
         if not articles:
             articles = soup.find_all('div', attrs={"data-service-review-card-paper": True})
@@ -207,7 +205,7 @@ def scrape_trustpilot_reviews(base_url: str, output_file: str = "reviews.json", 
         print(f"✅ Page {page}: {new_count} avis collectés (total: {len(all_reviews)})")
         polite_sleep()
 
-    # Écriture JSON "normal" (tableau)
+    # Écriture JSON "normal" 
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(all_reviews, f, indent=4, ensure_ascii=False)
 
