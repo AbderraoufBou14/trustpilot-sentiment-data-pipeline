@@ -64,8 +64,6 @@ services:
         condition: service_completed_successfully
       init-perms:
         condition: service_completed_successfully
-    env_file:
-      - ../../.env
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__LOAD_EXAMPLES: "False"
@@ -119,6 +117,7 @@ services:
       - ../../airflow/requirements.txt:/opt/airflow/requirements.txt:ro
       - airflow_logs:/opt/airflow/logs
       - airflow_data:/opt/airflow/data
+      - ../../ml_models:/ml_models
     command: ["airflow", "scheduler"]
     restart: unless-stopped
 

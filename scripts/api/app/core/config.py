@@ -11,7 +11,7 @@ MONGO_DB = os.getenv("MONGO_DB")
 MONGO_COL = os.getenv("MONGO_COL")
 
 # Chemin ver le modele ML
-MODEL_PATH = os.getenv("MODEL_V1_PATH")
+MODEL_PATH = os.getenv("MODEL_PATH")
 
 
 _client = None

@@ -7,12 +7,13 @@ services:
     container_name: showroomprive_api
     restart: unless-stopped
     env_file:
-      - .env
+      - ../../.env
     ports:
       - "8000:8000"
     networks:
       - projet_dst__net
-
+    volumes:
+      - ../../ml_models:/ml_models
 networks:
   projet_dst__net:
     external: true

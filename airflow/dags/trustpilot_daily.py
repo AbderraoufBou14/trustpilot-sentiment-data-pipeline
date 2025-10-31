@@ -6,10 +6,10 @@ from airflow.operators.python import get_current_context
 import os
 from scripts.scraper.trustpilot_scraper import scrape_trustpilot_reviews
 
-from scripts.pipelines.mapping_transform import clean_raw_to_ndjson  
+from scripts.pipeline.mapping_transform import clean_raw_to_ndjson  
 
-from scripts.pipelines.to_mongo import ingest_to_mongodb
-from scripts.pipelines.to_es import  ingest_to_es
+from scripts.pipeline.to_mongo import ingest_to_mongodb
+from scripts.pipeline.to_es import  ingest_to_es
 
 default_args = {
     "owner": "data-eng",
@@ -89,6 +89,11 @@ def pipeline():
         """Indexation ES (bulk) et retourne nombre de docs indexés."""
         
         return ingest_to_es(clean_path)
+    
+    @task()
+    def retrain_model():
+        """re-entrainement du modele de prédiction des avis."""
+        return 
 
     raw = scrape()
     clean_path = clean(raw)

@@ -1,43 +1,52 @@
-COMPOSE_CMD ?= docker compose
-COMPOSE_DIR ?= infrastructure/compose
-STACK=all
-ENV ?= infrastructure/compose/.env
-ENV_FLAG := $(if $(wildcard $(ENV)),--env-file $(ENV),)
-PROJECT ?=
-PROJECT_FLAG := $(if $(PROJECT),-p $(PROJECT),)
+# ========= CONFIG =========
+COMPOSE_DIR := infrastructure/compose
+ENV_FILE := .env
+COMPOSE := docker compose --env-file .env
 
-# Résolution des fichiers compose
-ifeq ($(STACK),all)
-  FILES := $(wildcard $(COMPOSE_DIR)/*.yml) $(wildcard $(COMPOSE_DIR)/*.yaml)
-else
-  STACK_LIST := $(subst ,, ,$(STACK))
-  FILES := $(foreach s,$(STACK_LIST), \
-            $(firstword \
-              $(wildcard $(COMPOSE_DIR)/$(s).docker-compose.yml) \
-              $(wildcard $(COMPOSE_DIR)/$(s).docker-compose.yaml)))
-  $(foreach s,$(STACK_LIST),$(if $(firstword \
-      $(wildcard $(COMPOSE_DIR)/$(s).docker-compose.yml) \
-      $(wildcard $(COMPOSE_DIR)/$(s).docker-compose.yaml)),,\
-      $(error Stack introuvable: $(s))))
-endif
-COMPOSE_FILES := $(foreach f,$(FILES),-f $(f))
-DC := $(COMPOSE_CMD) $(PROJECT_FLAG) $(COMPOSE_FILES) $(ENV_FLAG)
+# Compose files
+AIRFLOW := $(COMPOSE_DIR)/airflow.docker-compose.yml
+API := $(COMPOSE_DIR)/api.docker-compose.yml
+ELASTIC := $(COMPOSE_DIR)/elasticsearch.docker-compose.yml
+ALL := -f $(AIRFLOW) -f $(API) -f $(ELASTIC)
 
-.DEFAULT_GOAL := help
-.PHONY: up down restart ps logs tail build pull recreate reset list help
+# ========= ACTIONS =========
+up:
+	@case "$(arg)" in \
+		api) $(COMPOSE) -f $(API) up -d ;; \
+		airflow) $(COMPOSE) -f $(AIRFLOW) up -d ;; \
+		elastic) $(COMPOSE) -f $(ELASTIC) up -d ;; \
+		*) $(COMPOSE) $(ALL) up -d ;; \
+	esac
 
-up:     ; $(DC) up -d --remove-orphans
-down:   ; $(DC) down
-restart:; $(DC) down && $(DC) up -d --remove-orphans
-ps:     ; $(DC) ps
-logs:   ; $(DC) logs --tail=200
-tail:   ; $(DC) logs -f --tail=200
-build:  ; $(DC) build $(if $(NO_CACHE),--no-cache,)
-pull:   ; $(DC) pull
-recreate:;$(DC) up -d --force-recreate --remove-orphans
-reset:  ; $(DC) down -v
-list:
-	@echo "Fichiers détectés:"; for f in $(wildcard $(COMPOSE_DIR)/*.yml) $(wildcard $(COMPOSE_DIR)/*.yaml); do echo " - $$f"; done
+down:
+	@case "$(arg)" in \
+		api) $(COMPOSE) -f $(API) down ;; \
+		airflow) $(COMPOSE) -f $(AIRFLOW) down ;; \
+		elastic) $(COMPOSE) -f $(ELASTIC) down ;; \
+		*) $(COMPOSE) $(ALL) down ;; \
+	esac
+
+restart:
+	@make down arg=$(arg)
+	@make up arg=$(arg)
+
+logs:
+	@case "$(arg)" in \
+		api) $(COMPOSE) -f $(API) logs -f showroomprive_api ;; \
+		airflow) $(COMPOSE) -f $(AIRFLOW) logs -f airflow-webserver ;; \
+		elastic) $(COMPOSE) -f $(ELASTIC) logs -f elasticsearch ;; \
+		*) docker compose logs -f ;; \
+	esac
+
+ps:
+	docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+
+# ========= SHORTCUTS =========
+up-all down-all restart-all:  ; make $(subst -, ,$@) arg=all
+up-api down-api restart-api:  ; make $(subst -, ,$@) arg=api
+up-airflow down-airflow restart-airflow: ; make $(subst -, ,$@) arg=airflow
+up-elastic down-elastic restart-elastic: ; make $(subst -, ,$@) arg=elastic
+logs-api: ; make logs arg=api
+
 help:
-	@echo "Usage: STACK=all|airflow|airflow,api make [up|down|ps|logs|tail|build|pull|recreate|reset|list]"
-	@echo "Exemples: make up ; STACK=airflow make logs ; PROJECT=dst ENV=.env.dev STACK=api make up"
+	@echo "Usage : make [up|down|restart|logs] [api|airflow|elastic|all]"
