@@ -31,7 +31,6 @@ flowchart LR
     D --> F[TF-IDF + Logistic Regression];
     F -->|model.joblib| G[FastAPI API];
     G --> H[Kibana Dashboards];
----
 
 ## ⚙️ Commandes clés
 ```bash
