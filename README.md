@@ -24,13 +24,13 @@ Objectifs :
 ## 🧩 Architecture globale
 ```mermaid
 flowchart LR
-    A[Trustpilot Scraper] --> B[MongoDB Atlas - raw];
-    B --> C[Cleaning & Normalization];
-    C --> D[MongoDB Atlas - clean];
-    D --> E[Elasticsearch];
-    D --> F[TF-IDF + Logistic Regression];
+    A[Trustpilot Scraper] --> B[Transformation & Normalization & Mapping ES];
+    B --> C[MongoDB Atlas - clean];
+    C --> D[Elasticsearch];
+    B --> F[TF-IDF + Logistic Regression];
+    C -->|BDD MongoDB| G[FastAPI API];
     F -->|model.joblib| G[FastAPI API];
-    G --> H[Kibana Dashboards];
+    D --> H[Kibana Dashboards];
 ```
 ## ⚙️ Commandes clés
 ```bash
