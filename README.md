@@ -12,8 +12,8 @@
 
 ## projet
 
-**Pipeline complet de Data Engineering et de Machine Learning pour l’analyse des avis Trustpilot (cas Showroomprivé.com), conçu pour être facilement déployable et portable via Docker Compose. 
-**
+Pipeline complet de Data Engineering et de Machine Learning pour l’analyse des avis Trustpilot (cas Showroomprivé.com), conçu pour être facilement déployable et portable via Docker Compose. 
+
 Objectifs : 
     - Centraliser les avis clients collectés sur Trustpilot dans une base de données NoSQL (MongoDB Atlas).
     - Prédire automatiquement le sentiment client (positif ou négatif) grâce à un modèle de Machine Learning.
@@ -23,7 +23,7 @@ Objectifs :
 ## 🧩 Architecture globale
 ```mermaid
 flowchart LR
-    A[Trustpilot Scraper] --> B[MongoDB Atlas (raw)]
+    A [Trustpilot Scraper] --> B [MongoDB Atlas (raw)]
     B --> C[Cleaning & Normalization]
     C --> D[MongoDB Atlas (clean)]
     D --> E[Elasticsearch]
