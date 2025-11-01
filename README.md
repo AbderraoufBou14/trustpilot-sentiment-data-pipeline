@@ -31,7 +31,7 @@ flowchart LR
     D --> F[TF-IDF + Logistic Regression];
     F -->|model.joblib| G[FastAPI API];
     G --> H[Kibana Dashboards];
-
+```
 ## ⚙️ Commandes clés
 ```bash
 make up-all        # Lancer toute la stack infra ( conteneurs docker )
