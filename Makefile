@@ -1,46 +1,49 @@
 # ========= CONFIG =========
-COMPOSE_DIR := infrastructure/compose
 ENV_FILE := .env
-COMPOSE := docker compose --env-file .env
+COMPOSE  := docker compose --env-file $(ENV_FILE)
 
-# Compose files
+COMPOSE_DIR := infrastructure/compose
 AIRFLOW := $(COMPOSE_DIR)/airflow.docker-compose.yml
-API := $(COMPOSE_DIR)/api.docker-compose.yml
+API     := $(COMPOSE_DIR)/api.docker-compose.yml
 ELASTIC := $(COMPOSE_DIR)/elasticsearch.docker-compose.yml
-ALL := -f $(AIRFLOW) -f $(API) -f $(ELASTIC)
 
-# ========= ACTIONS =========
-up:
-	@case "$(arg)" in \
-		api) $(COMPOSE) -f $(API) up -d ;; \
-		airflow) $(COMPOSE) -f $(AIRFLOW) up -d ;; \
-		elastic) $(COMPOSE) -f $(ELASTIC) up -d ;; \
-		*) $(COMPOSE) $(ALL) up -d ;; \
+# Par défaut : tous les services. Surcharger avec: make up SERVICE=api
+SERVICE ?= all
+
+# ========= MACRO D’EXÉCUTION =========
+define RUN_COMPOSE
+	@case "$(SERVICE)" in \
+		api)     $(COMPOSE) -f $(API) $(1) ;; \
+		airflow) $(COMPOSE) -f $(AIRFLOW) $(1) ;; \
+		elastic) $(COMPOSE) -f $(ELASTIC) $(1) ;; \
+		all)     $(COMPOSE) -f $(AIRFLOW) -f $(API) -f $(ELASTIC) $(1) ;; \
+		*) echo "Unknown SERVICE='$(SERVICE)'. Use api|airflow|elastic|all"; exit 1 ;; \
 	esac
+endef
+
+# ========= COMMANDES =========
+.PHONY: up down build restart logs ps prune help
+
+up:
+	$(call RUN_COMPOSE,up -d)
 
 down:
-	@case "$(arg)" in \
-		api) $(COMPOSE) -f $(API) down ;; \
-		airflow) $(COMPOSE) -f $(AIRFLOW) down ;; \
-		elastic) $(COMPOSE) -f $(ELASTIC) down ;; \
-		*) $(COMPOSE) $(ALL) down ;; \
-	esac
+	$(call RUN_COMPOSE,down)
+
+build:
+	$(call RUN_COMPOSE,build)
 
 restart:
-	@make down arg=$(arg)
-	@make up arg=$(arg)
+	@$(MAKE) down SERVICE=$(SERVICE)
+	@$(MAKE) up SERVICE=$(SERVICE)
 
 logs:
-	@case "$(arg)" in \
-		api) $(COMPOSE) -f $(API) logs -f showroomprive_api ;; \
-		airflow) $(COMPOSE) -f $(AIRFLOW) logs -f airflow-webserver ;; \
-		elastic) $(COMPOSE) -f $(ELASTIC) logs -f elasticsearch ;; \
-		*) docker compose logs -f ;; \
-	esac
+	$(call RUN_COMPOSE,logs -f)
 
 ps:
-	docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+	$(call RUN_COMPOSE,ps)
 
+<<<<<<< HEAD
 # ========= SHORTCUTS =========
 up-all down-all restart-all:  ; make $(subst -, ,$@) arg=all
 up-api down-api restart-api:  ; make $(subst -, ,$@) arg=api
@@ -54,3 +57,12 @@ help:
 =======
 	@echo "Usage : make [up|down|restart|logs] [api|airflow|elastic|all]"
   main
+=======
+# Nettoyage soft (dangling images/containers/build cache). N’efface pas les volumes nommés.
+prune:
+	@echo "Pruning unused containers/images/build cache (safe)…"
+	@docker container prune -f
+	@docker image prune -f
+	@docker builder prune -f
+	@echo "Done."
+>>>>>>> 8bfe855 (feat: creation d'un nouveau dag pour re-entrainer le model e ML chaque semaine.)

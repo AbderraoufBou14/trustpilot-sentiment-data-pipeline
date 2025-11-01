@@ -89,11 +89,6 @@ def pipeline():
         """Indexation ES (bulk) et retourne nombre de docs indexés."""
         
         return ingest_to_es(clean_path)
-    
-    @task()
-    def retrain_model():
-        """re-entrainement du modele de prédiction des avis."""
-        return 
 
     raw = scrape()
     clean_path = clean(raw)

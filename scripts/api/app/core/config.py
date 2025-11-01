@@ -32,6 +32,3 @@ def close_client() -> None:
         _client.close()
         _client = None
 
-
-def get_model_v1_path() -> str:
-    return os.getenv("MODEL_V1_PATH")

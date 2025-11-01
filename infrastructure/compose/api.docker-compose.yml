@@ -1,7 +1,7 @@
 services:
   api:
     build:
-      context: .
+      context: ../../scripts/api/app
       dockerfile: Dockerfile
     image: etape_4-api:latest
     container_name: showroomprive_api
@@ -9,11 +9,10 @@ services:
     env_file:
       - ../../.env
     ports:
-      - "8000:8000"
-    networks:
-      - projet_dst__net
+      - "${API_PORT:-8000}:8000"
     volumes:
-      - ../../ml_models:/ml_models
-networks:
-  projet_dst__net:
-    external: true
+      - ml_models_vol:/ml_models:ro
+
+volumes:
+  ml_models_vol:
+    name: ml_models_vol

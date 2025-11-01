@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends
-from app.core.config import get_collection
-from app.routers import reviews, stats, predict
+from core.config import get_collection
+from routers import reviews, stats, predict
 
 app = FastAPI(title="Satisfaction Client API")
 

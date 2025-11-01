@@ -1,6 +1,7 @@
 services:
   airflow-postgres:
     image: postgres:16-alpine
+    container_name: compose-airflow-postgres-1
     environment:
       POSTGRES_USER: airflow
       POSTGRES_PASSWORD: airflow
@@ -9,119 +10,91 @@ services:
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "airflow"]
       interval: 5s
+      timeout: 5s
       retries: 10
     volumes:
       - airflow_pg_data:/var/lib/postgresql/data
 
-  # Init permissions sur les volumes nommés 
   init-perms:
     image: alpine:3.20
-    user: "0:0"
-    entrypoint: ["/bin/sh", "-lc"]
-    command:
-      - >
-        set -eux;
-        mkdir -p /mnt/data/raw /mnt/logs;
-        chown -R 50000:0 /mnt/data /mnt/logs;
-        chmod -R u+rwX,g+rwX /mnt/data /mnt/logs;
-        find /mnt/data /mnt/logs -type d -exec chmod g+s {} \; || true;
-        echo "Done init-perms";
-    volumes:
-      - airflow_data:/mnt/data
-      - airflow_logs:/mnt/logs
-    restart: "no"
-
-  # Init DB 
-  airflow-init:
-    image: apache/airflow:2.9.2-python3.11
-    user: "${AIRFLOW_UID:-50000}:${AIRFLOW_GID:-0}"
+    container_name: compose-init-perms-1
     depends_on:
       airflow-postgres:
         condition: service_healthy
-      init-perms:
-        condition: service_completed_successfully
-    environment:
-      AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
-      AIRFLOW__CORE__DEFAULT_TIMEZONE: ${TZ:-Europe/Paris}
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-postgres/airflow
-      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
-      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW__WEBSERVER__SECRET_KEY}
-      TZ: ${TZ:-Europe/Paris}
-    command: ["bash", "-lc", "set -e; airflow db migrate"]
+    entrypoint: ["/bin/sh","-c"]
+    command: >
+      "mkdir -p /opt/airflow/logs /opt/airflow/data /ml_models &&
+       chown -R 50000:0 /opt/airflow/logs /opt/airflow/data /ml_models &&
+       echo 'Perms OK'"
     volumes:
       - airflow_logs:/opt/airflow/logs
       - airflow_data:/opt/airflow/data
-    restart: "no"
+      - ml_models_vol:/ml_models
 
   airflow-webserver:
     image: apache/airflow:2.9.2-python3.11
-    user: "${AIRFLOW_UID:-50000}:${AIRFLOW_GID:-0}"
+    container_name: airflow-webserver
     depends_on:
       airflow-postgres:
         condition: service_healthy
-      airflow-init:
-        condition: service_completed_successfully
-      init-perms:
-        condition: service_completed_successfully
-    environment:
-      AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
-      AIRFLOW__CORE__DEFAULT_TIMEZONE: ${TZ:-Europe/Paris}
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-postgres/airflow
-      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
-      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW__WEBSERVER__SECRET_KEY}
-      PYTHONPATH: /opt/airflow/project
-      TZ: ${TZ:-Europe/Paris}
-      _AIRFLOW_WWW_USER_CREATE: "true"
-      _AIRFLOW_WWW_USER_USERNAME: ${AIRFLOW_ADMIN_USER:-admin}
-      _AIRFLOW_WWW_USER_PASSWORD: ${AIRFLOW_ADMIN_PASSWORD:-admin}
-      _AIRFLOW_WWW_USER_EMAIL: ${AIRFLOW_ADMIN_EMAIL:-admin@example.org}
-      _PIP_ADDITIONAL_REQUIREMENTS: "-r /opt/airflow/requirements.txt"    
-    volumes:
-      - ../../airflow/dags:/opt/airflow/dags:ro
-      - ../..:/opt/airflow/project:rw
-      - ../../airflow/requirements.txt:/opt/airflow/requirements.txt:ro
-      - airflow_logs:/opt/airflow/logs
-      - airflow_data:/opt/airflow/data
-    command: ["airflow", "webserver"]
-    ports:
-      - "8080:8080"
-    restart: unless-stopped
-
-  airflow-scheduler:
-    image: apache/airflow:2.9.2-python3.11
-    user: "${AIRFLOW_UID:-50000}:${AIRFLOW_GID:-0}"
-    depends_on:
-      airflow-postgres:
-        condition: service_healthy
-      airflow-init:
-        condition: service_completed_successfully
       init-perms:
         condition: service_completed_successfully
     env_file:
       - ../../.env
     environment:
+      PYTHONPATH: /opt/airflow/project
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__LOAD_EXAMPLES: "False"
-      AIRFLOW__CORE__DEFAULT_TIMEZONE: ${TZ:-Europe/Paris}
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-postgres/airflow
-      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
-      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW__WEBSERVER__SECRET_KEY}
-      PYTHONPATH: /opt/airflow/project
-      TZ: ${TZ:-Europe/Paris}
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/project/airflow/dags
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-postgres:5432/airflow
       _PIP_ADDITIONAL_REQUIREMENTS: "-r /opt/airflow/requirements.txt"
+      TZ: ${TZ:-Europe/Paris}
+    ports:
+      - "8080:8080"
+    command: ["airflow","webserver"]
+    healthcheck:
+      test: ["CMD","curl","-f","http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
     volumes:
-      - ../../airflow/dags:/opt/airflow/dags:ro
       - ../..:/opt/airflow/project:rw
       - ../../airflow/requirements.txt:/opt/airflow/requirements.txt:ro
       - airflow_logs:/opt/airflow/logs
       - airflow_data:/opt/airflow/data
-      - ../../ml_models:/ml_models
-    command: ["airflow", "scheduler"]
+      - ml_models_vol:/ml_models
+
+  airflow-scheduler:
+    image: apache/airflow:2.9.2-python3.11
+    container_name: airflow-scheduler
+    depends_on:
+      airflow-postgres:
+        condition: service_healthy
+      airflow-webserver:
+        condition: service_started
+    env_file:
+      - ../../.env
+    environment:
+      PYTHONPATH: /opt/airflow/project
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/project/airflow/dags
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-postgres:5432/airflow
+      _PIP_ADDITIONAL_REQUIREMENTS: "-r /opt/airflow/requirements.txt"
+      TZ: ${TZ:-Europe/Paris}
+    command: ["airflow","scheduler"]
     restart: unless-stopped
+    volumes:
+      - ../..:/opt/airflow/project:rw
+      - ../../airflow/requirements.txt:/opt/airflow/requirements.txt:ro
+      - airflow_logs:/opt/airflow/logs
+      - airflow_data:/opt/airflow/data
+      - ml_models_vol:/ml_models
 
 volumes:
   airflow_pg_data:
   airflow_logs:
   airflow_data:
+  ml_models_vol:
+    name: ml_models_vol

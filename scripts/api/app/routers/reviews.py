@@ -1,9 +1,9 @@
 from typing import Optional, Dict, Any
 from datetime import date, datetime, time, timezone
 from fastapi import APIRouter, Depends, Query
-from app.core.config import get_collection
-from app.core.utils import serialize_one
-from app.schemas import ReviewOut, ReviewsPage
+from core.config import get_collection
+from core.utils import serialize_one
+from schemas import ReviewOut, ReviewsPage
 
 router = APIRouter(prefix="", tags=["reviews"])
 

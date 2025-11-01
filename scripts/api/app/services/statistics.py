@@ -1,6 +1,6 @@
 from typing import Any, Dict, List
 from datetime import datetime, time, timezone
-from app.schemas import StarsBucket, TopItem, StatsOut
+from schemas import StarsBucket, TopItem, StatsOut
 
 def build_match(stars, pays, langue, date_from) -> Dict[str, Any]:
     match: Dict[str, Any] = {}
