@@ -12,15 +12,12 @@
 
 ## projet
 
-Pipeline complet de Data Engineering et de Machine Learning pour l’analyse des avis Trustpilot (cas Showroomprivé.com), conçu pour être facilement déployable et portable via Docker Compose. 
-
-```mermaid
-graph TD
-    O[Project Objectives]
-    O --> M[Centralize reviews in MongoDB (NoSQL)]
-    O --> S[Predict sentiment automatically (ML)]
-    O --> K[Power Kibana for text search & visualization]
-```
+**Pipeline complet de Data Engineering et de Machine Learning pour l’analyse des avis Trustpilot (cas Showroomprivé.com), conçu pour être facilement déployable et portable via Docker Compose. 
+**
+Objectifs : 
+    - Centraliser les avis clients collectés sur Trustpilot dans une base de données NoSQL (MongoDB Atlas).
+    - Prédire automatiquement le sentiment client (positif ou négatif) grâce à un modèle de Machine Learning.
+    - Alimenter des tableaux de bord Kibana pour une recherche textuelle optimisée et une analyse visuelle approfondie des avis.
 ---
 
 ## 🧩 Architecture globale
