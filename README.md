@@ -7,7 +7,6 @@
 ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-brightgreen)
 ![Elasticsearch](https://img.shields.io/badge/Elasticsearch-Search-yellow)
 ![Docker](https://img.shields.io/badge/Docker-Compose-lightblue)
-![Status](https://img.shields.io/badge/Status-Stable-success)
 
 ---
 
@@ -15,25 +14,25 @@
 
 Pipeline complet de Data Engineering et de Machine Learning pour l’analyse des avis Trustpilot (cas Showroomprivé.com), conçu pour être facilement déployable et portable via Docker Compose. 
 
-Objectifs : 
-    - Centraliser les avis clients collectés sur Trustpilot dans une base de données NoSQL (MongoDB Atlas).
-    - Prédire automatiquement le sentiment client (positif ou négatif) grâce à un modèle de Machine Learning.
-    - Alimenter des tableaux de bord Kibana pour une recherche textuelle optimisée et une analyse visuelle approfondie des avis.
-
+```mermaid
+graph TD
+    O[Project Objectives]
+    O --> M[Centralize reviews in MongoDB (NoSQL)]
+    O --> S[Predict sentiment automatically (ML)]
+    O --> K[Power Kibana for text search & visualization]
+```
 ---
 
 ## 🧩 Architecture globale
 ```mermaid
 flowchart LR
-    A[Trustpilot Scraper ] --> B[ MongoDB Atlas (Raw)]
-    B --> C[Nettoyage & Normalisation]
-    C --> D[MongoDB Atlas (Clean)]
+    A[Trustpilot Scraper] --> B[MongoDB Atlas (raw)]
+    B --> C[Cleaning & Normalization]
+    C --> D[MongoDB Atlas (clean)]
     D --> E[Elasticsearch]
     D --> F[TF-IDF + Logistic Regression]
-    F -->|Model.joblib| G[ API FastAPI]
-    F -->|Weekly retrain| H[ Airflow DAG]
-    H --> D
-    H --> F
+    F -->|model.joblib| G[FastAPI API]
+    G --> H[Kibana Dashboards]
 ```
 ---
 
