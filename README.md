@@ -25,13 +25,13 @@ Objectifs :
 ## 🧩 Architecture globale
 ```mermaid
 flowchart LR
-    A[Trustpilot Scraper ] --> B[MongoDB Atlas (Raw)]
-    B --> C[Nettoyage & Normalisation ]
+    A[Trustpilot Scraper ] --> B[ MongoDB Atlas (Raw)]
+    B --> C[Nettoyage & Normalisation]
     C --> D[MongoDB Atlas (Clean)]
-    D --> E[Elasticsearch ]
-    D --> F[TF-IDF + Logistic Regression ]
-    F -->|Model.joblib| G[ API FastAPI ]
-    F -->|Weekly retrain| H[ Airflow DAG ]
+    D --> E[Elasticsearch]
+    D --> F[TF-IDF + Logistic Regression]
+    F -->|Model.joblib| G[ API FastAPI]
+    F -->|Weekly retrain| H[ Airflow DAG]
     H --> D
     H --> F
 ```
