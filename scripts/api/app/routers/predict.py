@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Body, HTTPException
-from app.schemas import PredictIn, PredictOut
-from app.services.maching_learning import predict_v1
+from schemas import PredictIn, PredictOut
+from services.maching_learning import predict_v1
 
 router = APIRouter(prefix="", tags=["predict"])
 

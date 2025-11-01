@@ -1,9 +1,9 @@
 from typing import Optional
 from datetime import date
 from fastapi import APIRouter, Depends, Query
-from app.core.config import get_collection
-from app.services.statistics import build_match, stats_pipeline, to_stats_out
-from app.schemas import StatsOut
+from core.config import get_collection
+from services.statistics import build_match, stats_pipeline, to_stats_out
+from schemas import StatsOut
 
 router = APIRouter(prefix="", tags=["stats"])
 

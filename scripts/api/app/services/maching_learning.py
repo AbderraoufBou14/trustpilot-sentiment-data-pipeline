@@ -2,7 +2,7 @@ import joblib
 import numpy as np
 from threading import Lock
 from typing import Dict, Tuple
-from app.core.config import get_model_v1_path
+from core.config import get_model_path
 
 
 # modele ML (TF-IDF + LogReg) 
@@ -14,7 +14,7 @@ def get_model_v1():
     if _model_v1 is None:
         with _mlock_v1:
             if _model_v1 is None:
-                path = get_model_v1_path()
+                path = get_model_path()
                 mdl = joblib.load(path)
                 _model_v1 = mdl
     return _model_v1
