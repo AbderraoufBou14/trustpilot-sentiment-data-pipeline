@@ -37,7 +37,7 @@ flowchart LR
     B --> C[Transformation & Normalization & Mapping pour ES]
     C -->|NDJSON| D[MongoDB Atlas - clean]
     C -->|NDJSON| E[Elasticsearch]
-    D --> F[Modèle ML (TF-IDF + Logistic Regression - scikit-learn)]
+    D --> F[Modèle ML, TF-IDF + Logistic Regression - scikit-learn]
     D -->|Base MongoDB| G[FastAPI API]
     F -->|model.joblib| G
     E --> H[Kibana Dashboards]
