@@ -14,7 +14,15 @@
 
 ## projet
 
-Pipeline complet de Data Engineering et de Machine Learning pour l’analyse des avis Trustpilot (cas Showroomprivé.com), conçu pour être facilement déployable et portable via Docker Compose.
+Pipeline hybride Data Engineering & Machine Learning, orchestré avec Airflow, comprenant :
+
+un DAG ETL quotidien pour le scraping, la transformation et le chargement des données dans MongoDB et Elasticsearch
+
+un DAG Machine Learning hebdomadaire dédié au réentraînement du modèle NLP basé sur TF-IDF + Logistic Regression
+
+une API REST exposant le modèle de Machine Learning pour la prédiction en temps réel, ainsi que les données issues de MongoDB
+
+une recherche textuelle optimisée et une visualisation avancée grâce à un index Elasticsearch bien mappé et à des dashboards Kibana interactifs
 
 Objectifs : 
     - Centraliser les avis clients collectés sur Trustpilot dans une base de données NoSQL (MongoDB Atlas).
