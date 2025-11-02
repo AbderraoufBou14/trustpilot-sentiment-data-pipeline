@@ -26,34 +26,39 @@ Objectifs :
 ## 🧩 Architecture globale
 ```mermaid
 flowchart LR
-    %% --- Daily DAG: scrape -> clean -> load ES & Mongo ---
+    %% --- Daily DAG: scrape -> transform -> load ES & Mongo ---
     subgraph D[Airflow - Daily DAG]
-        D1[Scraping]
+        D1[Scraping - Extraction Trustpilot]
         D2[Transformation - Normalization - Mapping pour ES]
         D3[Load to MongoDB]
         D4[Load to Elasticsearch]
-        D1 --> |JSON |  D2 --> D3; D2 --> D4
+        D1 --> |JSON| D2
+        D2 --> |NDJSON| D3
+        D2 --> |NDJSON| D4
     end
 
     %% --- Weekly DAG: train model from MongoDB ---
     subgraph W[Airflow - Weekly DAG]
-        W1[Train ML from MongoDB - ML NLP Modele: TF-IDF + LogReg]
-        W2[Export model joblib]
+        W1[Train ML depuis MongoDB<br/>(TF-IDF + Logistic Regression)]
+        W2[Export model.joblib]
         W1 --> W2
     end
 
-    %% --- Storages and services ---
+    %% --- Storages et services ---
     M[MongoDB Atlas - clean]
     E[Elasticsearch]
     G[FastAPI API]
     K[Kibana Dashboards]
 
-    %% --- Data flows between DAGs and storages ---
+    %% --- Disposition parallèle des bases ---
     D3 --> M
     D4 --> E
     M --> W1
-    W2 --> G
+    W2 --> |model.joblib| G
     E --> K
+
+    %% --- Alignement visuel ---
+    M --- E
 ```
 ## ⚙️ Commandes clés
 ```bash
