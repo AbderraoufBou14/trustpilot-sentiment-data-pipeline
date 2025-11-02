@@ -6,7 +6,9 @@
 ![Airflow](https://img.shields.io/badge/Airflow-Orchestration-orange)
 ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-brightgreen)
 ![Elasticsearch](https://img.shields.io/badge/Elasticsearch-Search-yellow)
+![scikit-learn](https://img.shields.io/badge/scikit--learn-ML%20Pipeline-red)
 ![Docker](https://img.shields.io/badge/Docker-Compose-lightblue)
+![Makefile](https://img.shields.io/badge/Automation-Makefile-lightgrey)
 
 ---
 
@@ -24,14 +26,27 @@ Objectifs :
 ## 🧩 Architecture globale
 ```mermaid
 flowchart LR
-    A[Trustpilot Scraper] --> B[Raw Data];
-    B -->|JSON| C[Transformation & Normalization & Mapping pour ES]
-    C -->|NDJSON| D[MongoDB Atlas - clean];
-    C -->|NDJSON| E[Elasticsearch];
-    D --> F[modèle ML TF-IDF + LogReg];
-    D -->|BDD MongoDB| G[FastAPI API];
-    F -->|model.joblib| G[API FastAPI];
-    E --> H[Kibana Dashboards];
+    subgraph A[Airflow DAGs]
+        A1[Scraping Task]
+        A2[Cleaning & Transformation]
+        A3[Training ML Model]
+        A1 --> A2 --> A3
+    end
+
+    A1 --> B[Raw Data (JSON)]
+    B --> C[Transformation & Normalization & Mapping pour ES]
+    C -->|NDJSON| D[MongoDB Atlas - clean]
+    C -->|NDJSON| E[Elasticsearch]
+    D --> F[Modèle ML (TF-IDF + Logistic Regression - scikit-learn)]
+    D -->|Base MongoDB| G[FastAPI API]
+    F -->|model.joblib| G
+    E --> H[Kibana Dashboards]
+
+    subgraph I[Automation]
+        M[Makefile (build, up, down, logs)]
+    end
+    M --> A
+    M --> G
 ```
 ## ⚙️ Commandes clés
 ```bash
