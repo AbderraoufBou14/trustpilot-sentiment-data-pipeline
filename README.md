@@ -38,10 +38,11 @@ flowchart LR
     end
 
     %% --- Weekly DAG: train model from MongoDB ---
-    subgraph W[Airflow - Weekly DAG]
-        W1[Train ML depuis MongoDB<br/>TF-IDF + Logistic Regression]
-        W2[Export model.joblib]
-        W1 --> W2
+    subgraph W[Airflow - Weekly DAG - Machine Learning]
+        W1[Check connection MongoDB]
+        W2[Train ML NLP Model - TF-IDF + Logistic Regression]
+        W3[Export model.joblib]
+        W1 --> W2 --> W3
     end
 
     %% --- Storages et services ---
@@ -50,15 +51,9 @@ flowchart LR
     G[FastAPI API]
     K[Kibana Dashboards]
 
-    %% --- Disposition parallèle des bases ---
+    %% --- Flux de données ---
     D3 --> M
     D4 --> E
-    M --> W1
-    W2 --> |model.joblib| G
-    E --> K
-
-    %% --- Alignement visuel ---
-    M --- E
 ```
 ## ⚙️ Commandes clés
 ```bash
