@@ -1,5 +1,4 @@
-
-# 🧠 Trustpilot Showroomprivé Sentiment Pipeline
+# Pipeline hybride Data Engineering & Machine Learning – Analyse et prédiction du sentiment client à partir des avis Trustpilot
 
 ![Python](https://img.shields.io/badge/Python-3.12-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-API%20REST-green)
@@ -8,30 +7,31 @@
 ![Elasticsearch](https://img.shields.io/badge/Elasticsearch-Search-yellow)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-ML%20Pipeline-red)
 ![Docker](https://img.shields.io/badge/Docker-Compose-lightblue)
-![Makefile](https://img.shields.io/badge/Automation-Makefile-lightgrey)
+![Automation](https://img.shields.io/badge/Makefile-Automation-lightgrey)
 
 ---
 
-## projet
+## Description du pipeline :
 
 Pipeline hybride Data Engineering & Machine Learning, orchestré avec Airflow, comprenant :
 
-un DAG ETL quotidien pour le scraping, la transformation et le chargement des données dans MongoDB et Elasticsearch
+- Un DAG ETL quotidien pour le scraping, la transformation et le chargement des données dans MongoDB et **Elasticsearch  
+- Un DAG Machine Learning hebdomadaire dédié au réentraînement du modèle NLP basé sur TF-IDF + Logistic Regression  
+- Une API REST exposant le modèle de Machine Learning pour la prédiction en temps réel, ainsi que les données issues d'une base de données MongoDB  
+- Une recherche textuelle optimisée et une visualisation avancée grâce à un index Elasticsearch bien mappé et à des dashboards Kibana interactifs  
 
-un DAG Machine Learning hebdomadaire dédié au réentraînement du modèle NLP basé sur TF-IDF + Logistic Regression
-
-une API REST exposant le modèle de Machine Learning pour la prédiction en temps réel, ainsi que les données issues de MongoDB
-
-une recherche textuelle optimisée et une visualisation avancée grâce à un index Elasticsearch bien mappé et à des dashboards Kibana interactifs
-
-Objectifs : 
-    - Centraliser les avis clients collectés sur Trustpilot dans une base de données NoSQL (MongoDB Atlas).
-    - Prédire automatiquement le sentiment client (positif ou négatif) grâce à un modèle de Machine Learning.
-    - Alimenter des tableaux de bord Kibana pour une recherche textuelle optimisée et une analyse visuelle approfondie des avis.
-    
 ---
 
-## 🧩 Architecture globale
+## 🎯 Objectif :
+
+Automatiser l’analyse de la satisfaction client à partir des avis Trustpilot, en centralisant les données dans MongoDB et en exploitant un modèle de Machine Learning pour prédire le sentiment. Et aussi visualiser les tendances dans Kibana.  
+
+**NB :** Le projet utilise les avis publics Trustpilot du site *Showroomprive.com* à titre d’exemple de cas d’étude.
+
+---
+
+## 🧱 Architecture globale :
+
 ```mermaid
 flowchart LR
     %% --- Daily DAG ---
@@ -68,10 +68,13 @@ flowchart LR
     E --> K
 ```
 ## ⚙️ Commandes clés
+
+Un Makefile est mis en place pour simplifier le déploiement et la gestion de l’infrastructure Docker.
+
 ```bash
-make up-all        # Lancer toute la stack infra ( conteneurs docker )
-make down-all      # Stopper les conteneurs
-make logs-api      # Voir les logs FastAPI
+make up-all         # Lancer l’ensemble des conteneurs (Airflow, API, Elasticsearch)
+make down-all       # Stopper et supprimer les conteneurs
+make logs-api       # Afficher les logs du service FastAPI
 ```
 
 ## 📸 Captures (à insérer)
@@ -91,7 +94,12 @@ Réponse :
 
 ---
 
-## 🧱 Auteur
+## 👨‍💻 Auteur
+
 **Abderraouf Boukarma**  
-📧 boukarmaadberraouf@gmail.com  
-🔗 [GitHub](https://github.com/AbderraoufBou14)
+
+Pipeline conçu dans le cadre du projet de fin d’études _Trustpilot Sentiment-Analysis Pipeline_ – formation **Data Engineer (École des Mines x DataScientest)**  
+
+📧 **Email :** [boukarma.abderraouf@gmail.com](mailto:boukarma.abderraouf@gmail.com)  
+🌐 **LinkedIn :** [linkedin.com/in/abderraouf-boukarma](https://www.linkedin.com/in/abderraouf-boukarma)  
+💻 **GitHub :** [github.com/AbderraoufBou14](https://github.com/AbderraoufBou14)
