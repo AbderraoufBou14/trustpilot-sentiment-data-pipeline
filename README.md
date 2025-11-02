@@ -26,24 +26,34 @@ Objectifs :
 ## 🧩 Architecture globale
 ```mermaid
 flowchart LR
-    subgraph A[Airflow DAGs]
-        A1[Scraping]
-        A2[Cleaning & Transformation]
-        A3[Load to MongoDB]
-        A4[Load to Elasticsearch]
-        A5[Training ML Model]
-        A1 --> A2 --> A3 --> A4 --> A5
+    %% --- Daily DAG: scrape -> clean -> load ES & Mongo ---
+    subgraph D[Airflow - Daily DAG]
+        D1[Scraping]
+        D2[Cleaning - Normalization]
+        D3[Load to MongoDB]
+        D4[Load to Elasticsearch]
+        D1 --> D2 --> D3 --> D4
     end
 
-    A1 --> B[Raw Data JSON]
-    A2 --> C[Normalized NDJSON]
-    A3 --> D[MongoDB Atlas - clean]
-    A4 --> E[Elasticsearch]
-    A5 --> F[Model TF-IDF + Logistic Regression scikit-learn]
-    D --> G[FastAPI API]
-    F -->|model.joblib| G
-    E --> H[Kibana Dashboards]
+    %% --- Weekly DAG: train model from MongoDB ---
+    subgraph W[Airflow - Weekly DAG]
+        W1[Train ML from MongoDB]
+        W2[Export model joblib]
+        W1 --> W2
+    end
 
+    %% --- Storages and services ---
+    M[MongoDB Atlas - clean]
+    E[Elasticsearch]
+    G[FastAPI API]
+    K[Kibana Dashboards]
+
+    %% --- Data flows between DAGs and storages ---
+    D3 --> M
+    D4 --> E
+    M --> W1
+    W2 --> G
+    E --> K
 ```
 ## ⚙️ Commandes clés
 ```bash
