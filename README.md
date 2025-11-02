@@ -47,7 +47,7 @@ flowchart LR
 
     %% --- Bases et services ---
     M[MongoDB Atlas - clean]
-    E[Elasticsearch]
+    E[Elasticsearch - indexé et prêt à la recherche]
     G[FastAPI API]
     K[Kibana Dashboards]
 
@@ -55,7 +55,7 @@ flowchart LR
     D3 --> M
     D4 --> E
     M --> W1
-    M --> G
+    M --> |Schémas de données validés par Pydantic| G
     W3 --> |model.joblib| G
     E --> K
 ```
