@@ -27,18 +27,36 @@ Objectifs :
 ```mermaid
 flowchart LR
     %% --- Daily DAG ---
-    A1[Scraping - Extraction Trustpilot] --> |JSON| A2[Transformation - Normalization - Mapping pour ES]
-    A2 --> |NDJSON| B1[MongoDB Atlas - clean]
-    A2 --> |NDJSON| B2[Elasticsearch]
+    subgraph D[Airflow - Daily DAG]
+        D1[Scraping - Extraction Trustpilot]
+        D2[Transformation - Normalisation - Mapping pour ES]
+        D3[Load vers MongoDB]
+        D4[Load vers Elasticsearch]
+        D1 --> |JSON| D2
+        D2 --> |NDJSON| D3
+        D2 --> |NDJSON| D4
+    end
 
     %% --- Weekly DAG ---
-    B1 --> C1[Check connection MongoDB]
-    C1 --> C2[Train ML NLP Model - TF-IDF + Logistic Regression]
-    C2 --> |model.joblib| C3[Export du modèle]
+    subgraph W[Airflow - Weekly DAG - Machine Learning]
+        W1[Check connexion MongoDB]
+        W2[Train ML NLP Model - TF-IDF + Logistic Regression]
+        W3[Export modèle joblib]
+        W1 --> W2 --> W3
+    end
 
-    %% --- Services ---
-    C3 --> D1[FastAPI API]
-    B2 --> D2[Kibana Dashboards]
+    %% --- Bases et services ---
+    M[MongoDB Atlas - clean]
+    E[Elasticsearch]
+    G[FastAPI API]
+    K[Kibana Dashboards]
+
+    %% --- Flux de données ---
+    D3 --> M
+    D4 --> E
+    M --> W1
+    W3 --> |model.joblib| G
+    E --> K
 ```
 ## ⚙️ Commandes clés
 ```bash
