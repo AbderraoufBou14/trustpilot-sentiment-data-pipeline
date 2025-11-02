@@ -25,12 +25,13 @@ Objectifs :
 ```mermaid
 flowchart LR
     A[Trustpilot Scraper] --> B[Transformation & Normalization & Mapping ES];
-    B --> C[MongoDB Atlas - clean];
-    C --> D[Elasticsearch];
-    B --> F[TF-IDF + Logistic Regression];
-    C -->|BDD MongoDB| G[FastAPI API];
+    B --> |NDJSON| C[Transformation & Normalization & Mapping ES]
+    C --> D[MongoDB Atlas - clean];
+    C --> E[Elasticsearch];
+    D --> F[TF-IDF + Logistic Regression];
+    D -->|BDD MongoDB| G[FastAPI API];
     F -->|model.joblib| G[FastAPI API];
-    D --> H[Kibana Dashboards];
+    E --> H[Kibana Dashboards];
 ```
 ## ⚙️ Commandes clés
 ```bash
