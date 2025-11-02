@@ -27,26 +27,23 @@ Objectifs :
 ```mermaid
 flowchart LR
     subgraph A[Airflow DAGs]
-        A1[Scraping Task]
+        A1[Scraping]
         A2[Cleaning & Transformation]
-        A3[Training ML Model]
-        A1 --> A2 --> A3
+        A3[Load to MongoDB]
+        A4[Load to Elasticsearch]
+        A5[Training ML Model]
+        A1 --> A2 --> A3 --> A4 --> A5
     end
 
-    A1 --> B[Raw Data, JSON]
-    B --> C[Transformation & Normalization & Mapping pour ES]
-    C -->|NDJSON| D[MongoDB Atlas - clean]
-    C -->|NDJSON| E[Elasticsearch]
-    D --> F[Modèle ML, TF-IDF + Logistic Regression - scikit-learn]
-    D -->|Base MongoDB| G[FastAPI API]
+    A1 --> B[Raw Data JSON]
+    A2 --> C[Normalized NDJSON]
+    A3 --> D[MongoDB Atlas - clean]
+    A4 --> E[Elasticsearch]
+    A5 --> F[Model TF-IDF + Logistic Regression scikit-learn]
+    D --> G[FastAPI API]
     F -->|model.joblib| G
     E --> H[Kibana Dashboards]
 
-    subgraph I[Automation]
-        M[Makefile, build, up, down, logs]
-    end
-    M --> A
-    M --> G
 ```
 ## ⚙️ Commandes clés
 ```bash
