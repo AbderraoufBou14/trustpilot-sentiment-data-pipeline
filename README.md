@@ -29,15 +29,15 @@ flowchart LR
     %% --- Daily DAG: scrape -> clean -> load ES & Mongo ---
     subgraph D[Airflow - Daily DAG]
         D1[Scraping]
-        D2[Cleaning - Normalization]
+        D2[Transformation - Normalization - Mapping pour ES]
         D3[Load to MongoDB]
         D4[Load to Elasticsearch]
-        D1 --> D2 --> D3 --> D4
+        D1 --> D2 --> D3; D2 --> D4
     end
 
     %% --- Weekly DAG: train model from MongoDB ---
     subgraph W[Airflow - Weekly DAG]
-        W1[Train ML from MongoDB]
+        W1[Train ML from MongoDB - ML NLP Modele: TF-IDF + LogReg]
         W2[Export model joblib]
         W1 --> W2
     end
