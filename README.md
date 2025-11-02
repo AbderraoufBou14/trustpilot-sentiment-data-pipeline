@@ -29,7 +29,7 @@ flowchart LR
     %% --- Daily DAG: scrape -> clean -> load ES & Mongo ---
     subgraph D[Airflow - Daily DAG]
         D1[Scraping]
-        D2[Transformation - Normalization - Mapping pour ES]
+        D2|JSON|[Transformation - Normalization - Mapping pour ES]
         D3[Load to MongoDB]
         D4[Load to Elasticsearch]
         D1 --> D2 --> D3; D2 --> D4
