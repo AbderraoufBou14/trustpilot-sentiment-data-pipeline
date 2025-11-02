@@ -55,6 +55,7 @@ flowchart LR
     D3 --> M
     D4 --> E
     M --> W1
+    M --> G
     W3 --> |model.joblib| G
     E --> K
 ```
