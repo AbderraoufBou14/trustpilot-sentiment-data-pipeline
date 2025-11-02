@@ -43,7 +43,7 @@ flowchart LR
     E --> H[Kibana Dashboards]
 
     subgraph I[Automation]
-        M[Makefile (build, up, down, logs)]
+        M[Makefile, build, up, down, logs]
     end
     M --> A
     M --> G
