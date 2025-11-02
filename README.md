@@ -38,9 +38,9 @@ flowchart LR
     end
 
     %% --- Weekly DAG ---
-    subgraph subgraph W[Airflow - Weekly DAG - Machine_Learning     ]
+    subgraph subgraph W[Airflow - Weekly DAG "Machine_Learning"     ]
         W1[Check connexion MongoDB]
-        W2[Train ML NLP Model - TF-IDF + Logistic Regression]
+        W2[Train ML NLP Model - TF-IDF + LogReg]
         W3[Export modèle joblib]
         W1 --> W2 --> W3
     end
