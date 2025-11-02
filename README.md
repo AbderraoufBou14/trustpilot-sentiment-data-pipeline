@@ -33,12 +33,12 @@ flowchart LR
         D3[Load vers MongoDB]
         D4[Load vers Elasticsearch]
         D1 --> |JSON| D2
-        D2 --> D3
-        D2 --> D4
+        D2 --> |NDJSON| D3
+        D2 --> |NDJSON| D4
     end
 
     %% --- Weekly DAG ---
-    subgraph subgraph W[Airflow - Weekly DAG - Machine&#160;Learning]
+    subgraph subgraph W[Airflow - Weekly DAG - Machine_Learning     ]
         W1[Check connexion MongoDB]
         W2[Train ML NLP Model - TF-IDF + Logistic Regression]
         W3[Export modèle joblib]
@@ -52,8 +52,8 @@ flowchart LR
     K[Kibana Dashboards]
 
     %% --- Flux de données ---
-    D3 --> |NDJSON| M
-    D4 --> |NDJSON| E
+    D3 --> M
+    D4 --> E
     M --> W1
     W3 --> |model.joblib| G
     E --> K
