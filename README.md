@@ -27,7 +27,7 @@ Objectifs :
 ```mermaid
 flowchart LR
     %% --- Daily DAG ---
-    subgraph D[Airflow - Daily DAG]
+    subgraph D[Airflow_Daily_DAG_ETL]
         D1[Scraping - Extraction Trustpilot]
         D2[Transformation - Normalisation - Mapping pour ES]
         D3[Load vers MongoDB]
