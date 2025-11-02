@@ -39,7 +39,7 @@ flowchart LR
 
     %% --- Weekly DAG: train model from MongoDB ---
     subgraph W[Airflow - Weekly DAG]
-        W1[Train ML depuis MongoDB<br/>(TF-IDF + Logistic Regression)]
+        W1[Train ML depuis MongoDB<br/>TF-IDF + Logistic Regression]
         W2[Export model.joblib]
         W1 --> W2
     end
