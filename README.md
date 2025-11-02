@@ -33,7 +33,7 @@ flowchart LR
         A1 --> A2 --> A3
     end
 
-    A1 --> B[Raw Data (JSON)]
+    A1 --> B[Raw Data, JSON]
     B --> C[Transformation & Normalization & Mapping pour ES]
     C -->|NDJSON| D[MongoDB Atlas - clean]
     C -->|NDJSON| E[Elasticsearch]
