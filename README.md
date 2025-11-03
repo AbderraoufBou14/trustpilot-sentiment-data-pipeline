@@ -22,7 +22,7 @@ Pipeline hybride Data Engineering & Machine Learning, orchestré avec Airflow, c
 
 ---
 
-## 🎯 Objectif :
+## Objectif :
 
 Automatiser l’analyse de la satisfaction client à partir des avis Trustpilot, en centralisant les données dans MongoDB et en exploitant un modèle de Machine Learning pour prédire le sentiment. Et aussi visualiser les tendances dans Kibana.  
 
@@ -30,7 +30,7 @@ Automatiser l’analyse de la satisfaction client à partir des avis Trustpilot,
 
 ---
 
-## 🧱 Architecture globale :
+## Architecture globale :
 
 ```mermaid
 flowchart LR
@@ -67,7 +67,7 @@ flowchart LR
     W3 --> |model.joblib| G
     E --> K
 ```
-## ⚙️ Commandes clés
+## Commandes clés
 
 Un Makefile est mis en place pour simplifier le déploiement et la gestion de l’infrastructure Docker.
 
@@ -77,19 +77,46 @@ make down-all       # Stopper et supprimer les conteneurs
 make logs-api       # Afficher les logs du service FastAPI
 ```
 
-## 📸 Captures (à insérer)
-- docs/screenshots/kibana_dashboard.png
-- docs/screenshots/api_docs.png
+## Captures d’écran
+
+[<img src="docs/screenshots/Airflow/Airflow_dags.png" width="150"/>](docs/screenshots/Airflow/Airflow_dags.png)
+[<img src="docs/screenshots/Airflow/Dag_ETL_daily.png" width="150"/>](docs/screenshots/Airflow/Dag_ETL_daily.png)
+[<img src="docs/screenshots/Airflow/Dag_ML_weekly.png" width="150"/>](docs/screenshots/Airflow/Dag_ML_weekly.png)
+[<img src="docs/screenshots/API/Endpoints_API_FastAPI.png" width="150"/>](docs/screenshots/API/Endpoints_API_FastAPI.png)
+
+[<img src="docs/screenshots/Dashboard_kibana_Elasticsearch/Répartition%20des%20notes%20livraison.png" width="150"/>](docs/screenshots/Dashboard_kibana_Elasticsearch/Répartition%20des%20notes%20livraison.png)
+[<img src="docs/screenshots/Dashboard_kibana_Elasticsearch/Évolution%20mensuelle%20des%20avis%20mentionnant.png" width="150"/>](docs/screenshots/Dashboard_kibana_Elasticsearch/Évolution%20mensuelle%20des%20avis%20mentionnant.png)
+[<img src="docs/screenshots/Ml_Modele/Classification_report_Confusion_matrix.png" width="150"/>](docs/screenshots/Ml_Modele/Classification_report_Confusion_matrix.png)
+[<img src="docs/screenshots/Ml_Modele/sauvegard_et_check_du_modele_entrainé.png" width="150"/>](docs/screenshots/Ml_Modele/sauvegard_et_check_du_modele_entrainé.png)
 
 ---
 
-## 📈 Exemple d'utilisation
+## Exemples de requetes pour L'API FastApi :
+
+L’API expose trois endpoints principaux :  
+- `/predict/v1` : Prédire le sentiment d’un avis client  
+- `/avis` : Récupérer les avis stockés dans MongoDB  
+- `/stats` : Obtenir des statistiques agrégées sur les sentiments  
+
+---
+
+### 🔹 1. Prédiction de sentiment (`/predict/v1`)
+
+**Requête :**
 ```bash
-curl -X POST "http://localhost:8000/predict/v1"      -H "Content-Type: application/json"      -d '{"text": "Livraison rapide et produit conforme"}'
+curl -X POST "http://localhost:8000/predict/v1" \ -H "Content-Type: application/json" \ -d '{"text": "Livraison rapide et service impeccable !"}'
 ```
-Réponse :
-```json
-{"label": "positive", "probability": 0.93}
+
+### 🔹 2. Récupération des avis (/avis)
+```bash
+curl -X 'GET' \
+  'http://localhost:8000/avis?stars=2&pays=france&sort=date_desc&limit=100' \ -H 'accept: application/json'
+```
+
+### 🔹 3. Statistiques globales (/stats)
+```bash
+curl -X 'GET' \
+  'http://localhost:8000/stats?stars=2&langue=fr' \ -H 'accept: application/json'
 ```
 
 ---
