@@ -127,6 +127,6 @@ curl -X 'GET' \
 
 Pipeline conçu dans le cadre du projet de fin d’études _Trustpilot Sentiment-Analysis Pipeline_ – formation **Data Engineer (École des Mines x DataScientest)**  
 
-📧 **Email :** [boukarma.abderraouf@gmail.com](mailto:boukarma.abderraouf@gmail.com)  
+📧 **Email :** [boukarmaabderraouf@gmail.com](mailto:boukarma.abderraouf@gmail.com)  
 🌐 **LinkedIn :** [linkedin.com/in/abderraouf-boukarma](https://www.linkedin.com/in/abderraouf-boukarma)  
 💻 **GitHub :** [github.com/AbderraoufBou14](https://github.com/AbderraoufBou14)
