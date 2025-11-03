@@ -22,7 +22,6 @@ default_args = {
 def pipeline():
     @task()
     def check_bdd_conn():
-        # retourne un count; lève si collection vide
         return check_mongo_connection()
 
     @task()

@@ -42,27 +42,3 @@ logs:
 
 ps:
 	$(call RUN_COMPOSE,ps)
-
-<<<<<<< HEAD
-# ========= SHORTCUTS =========
-up-all down-all restart-all:  ; make $(subst -, ,$@) arg=all
-up-api down-api restart-api:  ; make $(subst -, ,$@) arg=api
-up-airflow down-airflow restart-airflow: ; make $(subst -, ,$@) arg=airflow
-up-elastic down-elastic restart-elastic: ; make $(subst -, ,$@) arg=elastic
-logs-api: ; make logs arg=api
-
-help:
- chore/re-modification-de-structure
-	@echo "Usage : make [up|down|restart|logs] [api|airflow|elastic|all]"
-=======
-	@echo "Usage : make [up|down|restart|logs] [api|airflow|elastic|all]"
-  main
-=======
-# Nettoyage soft (dangling images/containers/build cache). N’efface pas les volumes nommés.
-prune:
-	@echo "Pruning unused containers/images/build cache (safe)…"
-	@docker container prune -f
-	@docker image prune -f
-	@docker builder prune -f
-	@echo "Done."
->>>>>>> 8bfe855 (feat: creation d'un nouveau dag pour re-entrainer le model e ML chaque semaine.)
