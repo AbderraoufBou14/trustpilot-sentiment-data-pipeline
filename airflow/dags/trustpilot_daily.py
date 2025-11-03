@@ -29,7 +29,6 @@ default_args = {
 )
 def pipeline():
 
-
     @task()
     def scrape() -> str:
         """Scrape → retourne le chemin du JSON brut (XCom auto)."""
@@ -67,14 +66,12 @@ def pipeline():
     def clean(raw_path: str) -> str:
         """
         Normalise le JSON brut en NDJSON et renvoie le chemin du fichier .ndjson.
-        Le nom final inclut la date (héritée du nom d'entrée), ex:
+        Le nom final inclut la date, ex:
         /opt/airflow/data/clean/reviews_2025-10-12.ndjson
         """
         data_dir = Variable.get("DATA_DIR", "/opt/airflow/data")
         out_dir = os.path.join(data_dir, "clean")
         os.makedirs(out_dir, exist_ok=True)
-
-        # On laisse clean_raw_to_ndjson construire le nom cohérent à partir du brut
         ndjson_path = clean_raw_to_ndjson(raw_path, out_dir=out_dir)
         return ndjson_path
 
@@ -86,8 +83,7 @@ def pipeline():
 
     @task()
     def to_es(clean_path: str) -> int:
-        """Indexation ES (bulk) et retourne nombre de docs indexés."""
-        
+        """Indexation ES via l'api (bulk) et retourne nombre de docs indexés."""
         return ingest_to_es(clean_path)
 
     raw = scrape()
